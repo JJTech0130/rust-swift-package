@@ -45,13 +45,24 @@ jobs:
   
     steps:
     - name: extract current branch
-      #shell: bash
-      #run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
       id: extract_branch
     
     - name: check if output branch exists
       run: |
+        git show-ref --verify --quiet refs/heads/swift/${{ steps.extract_branch.outputs.branch }}
+        echo "::set-output name=should_create::$?"
+      id: branch_exists
+      
+    - name: switch to output branch
+      run: |
+        echo ${{ steps.branch_exists.outputs.should_create }}
+        if [ ${{ steps.branch_exists.outputs.should_create }} -ne 0 ]; then
+          echo "creating branch"
+        else
+          echo "branch exists"
+        fi
+        
         
     - name: switch to output branch
       run: |
