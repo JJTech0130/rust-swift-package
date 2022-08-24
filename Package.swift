@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-xcframework",
+    name: "rust-swift-package",
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
