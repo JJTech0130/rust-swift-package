@@ -5,9 +5,9 @@ on:
     branches: [ "master" ]
 
 jobs:
-  deploy:
+  build:
     runs-on: macos-latest
-    
+    if: ${{ false }}  # disable for now
     steps:
     - uses: actions/checkout@v3
     
@@ -39,3 +39,33 @@ jobs:
               url: 'https://nightly.link/JJTech0130/xcframework-template/actions/runs/${{ github.run_id }}/xcframework.zip'
             }
           })
+          
+  deploy:
+    runs-on: ubuntu-latest
+  
+    steps:
+    - name: extract current branch
+      #shell: bash
+      #run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+      id: extract_branch
+    
+    - name: check if output branch exists
+      run: |
+        
+    - name: switch to output branch
+      run: |
+        echo "swift/${{ steps.extract_branch.outputs.branch }}"
+      #echo "::set-output name=action_fruit::strawberry"
+
+    #- name: check for branch
+    #  env:
+    #    branch: 
+    #  run: |
+    #    git show-ref --verify --quiet refs/heads/<branch-name>
+    #    ret=$?
+    #    if [ $ret -ne 0 ]; then
+    #      echo "
+    #    else
+    #      echo "In Else"
+    ##   fi
