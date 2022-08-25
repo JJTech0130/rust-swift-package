@@ -63,11 +63,15 @@ jobs:
       run: echo "::set-output name=url::https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/xcframework.zip"
       id: assemble_url
       
+    - name: calculate hash
+      run: echo "::set-output name=hash::$(curl -sL ${{ steps.assemble_url.outputs.url }} | shasum -a 256 | head -c 64)"
+      id: calculate_hash
+      
     - name: replace $URL
       run: sed -i -e 's|$URL|${{ steps.assemble_url.outputs.url }}|g' Package.swift
       
     - name: replace $CHECKSUM
-      run: sed -i -e 's/$CHECKSUM/checktest/g' Package.swift
+      run: sed -i -e 's/$CHECKSUM/${{ steps.calculate_hash.outputs.hash }}/g' Package.swift
       
     - name: cat manifest
       run: cat Package.swift
