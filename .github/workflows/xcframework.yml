@@ -59,6 +59,12 @@ jobs:
     - name: copy template back
       run: cp ../Package.template.swift Package.swift
       
+    - name: replace $URL
+      run: sed -i -e 's/$URL/test/g' Package.swift
+      
+    - name: replace $CHECKSUM
+      run: sed -i -e 's/$CHECKSUM/checktest/g' Package.swift
+      
     - name: cat manifest
       run: cat Package.swift
       
