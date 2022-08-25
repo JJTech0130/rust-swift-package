@@ -14,7 +14,14 @@ jobs:
       run: rustup target add aarch64-apple-ios
     - name: Add x86_64-apple-ios target
       run: rustup target add x86_64-apple-ios
-       
+    
+    - name: Cache rustup
+      uses: actions/cache@v3.0.8
+      id: rustup-cache
+      with:
+        path: "~/.rustup"
+        key: ${{ runner.os }}-rustup
+
     - name: Generate XCFramework
       run: make xcframework
       
