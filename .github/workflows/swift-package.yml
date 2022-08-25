@@ -1,8 +1,6 @@
-name: Generate XCFramework
+name: Generate Swift Package
 
-on:
-  push:
-    branches: [ "master" ]
+on: push
 
 jobs:
   build:
@@ -11,6 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    # TODO: Find a way to cache this
     - name: Add aarch64-apple-ios target
       run: rustup target add aarch64-apple-ios
     - name: Add x86_64-apple-ios target
@@ -19,15 +18,12 @@ jobs:
     - name: Generate XCFramework
       run: make xcframework
       
+    # This is kind of hacky...  
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: xcframework
         path: target/*.xcframework/
-        
-    - name: assemble URL
-      run: echo "::set-output name=url::https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/xcframework.zip"
-      id: assemble_url
         
   deploy:
     needs: build
@@ -36,40 +32,47 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: copy template out
+    - name: Copy template out
       run: cp Package.template.swift ..
       
-    - name: extract current branch
+    - name: Extract current branch
       run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
       id: extract_branch
     
-    - name: create output branch
+    - name: Create output branch
       run: git switch --orphan swift/${{ steps.extract_branch.outputs.branch }}
       
-    - name: copy template back
+    - name: Copy template in
       run: cp ../Package.template.swift Package.swift
       
-    - name: assemble URL
+    - name: Assemble URL
       run: echo "::set-output name=url::https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/xcframework.zip"
       id: assemble_url
       
-    - name: calculate hash
+    - name: Calculate hash
       run: echo "::set-output name=hash::$(curl -sL ${{ steps.assemble_url.outputs.url }} | shasum -a 256 | head -c 64)"
       id: calculate_hash
       
-    - name: replace $URL
+    - name: Replace $URL
       run: sed -i -e 's|$URL|${{ steps.assemble_url.outputs.url }}|g' Package.swift
       
-    - name: replace $CHECKSUM
+    - name: Replace $CHECKSUM
       run: sed -i -e 's/$CHECKSUM/${{ steps.calculate_hash.outputs.hash }}/g' Package.swift
       
-    - name: cat manifest
-      run: cat Package.swift
+    #- name: cat manifest
+    #  run: cat Package.swift
+    
+    - run: git add Package.swift
+    
+    - run: git commit -m "test commit"
+    
+    # (just use --all rather than trying to insert the target branch name)
+    - run: git push -u origin --all
       
-    - name: git auto commit
-      uses: stefanzweifel/git-auto-commit-action@v4.14.1
-      with: 
-          commit_message: sync manifest with xcframework
+    #- name: git auto commit
+    #  uses: stefanzweifel/git-auto-commit-action@v4.14.1
+    #  with: 
+    #      commit_message: sync manifest with xcframework
           #commit_user_name: SideStore Bot
           #commit_user_email: 108193881+SideStorer@users.noreply.github.com
           #commit_author: SideStorer <108193881+SideStorer@users.noreply.github.com>
