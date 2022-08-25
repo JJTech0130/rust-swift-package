@@ -46,12 +46,18 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
+    - name: copy template out
+      run: cp Package.template.swift ..
+      
     - name: extract current branch
       run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
       id: extract_branch
     
     - name: create output branch
       run: git switch --orphan swift/${{ steps.extract_branch.outputs.branch }}
+      
+    - name: copy template back
+      run: cp ../Package.template.swift Package.swift
       
     #- name: check if output branch exists
     #  run: |
@@ -69,9 +75,9 @@ jobs:
     #    fi
         
         
-    - name: switch to output branch
-      run: |
-        echo "swift/${{ steps.extract_branch.outputs.branch }}"
+   # - name: switch to output branch
+     # run: |
+   #     echo "swift/${{ steps.extract_branch.outputs.branch }}"
       #echo "::set-output name=action_fruit::strawberry"
 
     #- name: check for branch
