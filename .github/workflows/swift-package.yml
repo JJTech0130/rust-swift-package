@@ -51,10 +51,12 @@ jobs:
       
     - name: Copy template in
       run: cp ../Package.template.swift Package.swift
-      
+    
     - name: Assemble URL
       run: echo "::set-output name=url::https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/xcframework.zip"
       id: assemble_url
+      
+    - run: curl -L ${{ steps.assemble_url.outputs.url }}
       
     - name: Calculate hash
       run: echo "::set-output name=hash::$(curl -sL ${{ steps.assemble_url.outputs.url }} | shasum -a 256 | head -c 64)"
