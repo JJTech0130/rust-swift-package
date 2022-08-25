@@ -59,8 +59,12 @@ jobs:
     - name: copy template back
       run: cp ../Package.template.swift Package.swift
       
+    - name: assemble URL
+      run: echo "::set-output name=url::https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/xcframework.zip"
+      id: assemble_url
+      
     - name: replace $URL
-      run: sed -i -e 's/$URL/test/g' Package.swift
+      run: sed -i -e 's/$URL/${{ steps.assemble_url.outputs.url }}/g' Package.swift
       
     - name: replace $CHECKSUM
       run: sed -i -e 's/$CHECKSUM/checktest/g' Package.swift
