@@ -25,6 +25,10 @@ jobs:
         name: xcframework
         path: target/*.xcframework/
         
+    - name: assemble URL
+      run: echo "::set-output name=url::https://nightly.link/${{ github.repository }}/actions/runs/${{ github.run_id }}/xcframework.zip"
+      id: assemble_url
+        
   deploy:
     needs: build
     runs-on: ubuntu-latest
