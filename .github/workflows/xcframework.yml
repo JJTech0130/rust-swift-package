@@ -64,7 +64,7 @@ jobs:
       id: assemble_url
       
     - name: replace $URL
-      run: sed -i -e 's/$URL/${{ steps.assemble_url.outputs.url }}/g' Package.swift
+      run: sed -i -e 's|$URL|${{ steps.assemble_url.outputs.url }}|g' Package.swift
       
     - name: replace $CHECKSUM
       run: sed -i -e 's/$CHECKSUM/checktest/g' Package.swift
