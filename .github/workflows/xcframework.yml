@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-    if: ${{ false }}  # disable for now
+    #if: ${{ false }}  # disable for now
     steps:
     - uses: actions/checkout@v3
     
@@ -25,21 +25,6 @@ jobs:
         name: xcframework
         path: target/*.xcframework/
         
-    - name: Dispatch workflow in Swift package repository
-      uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.SWIFT_PACKAGE_TOKEN }}
-        script: |
-          await github.rest.actions.createWorkflowDispatch({
-            owner: '${{ secrets.SWIFT_PACKAGE_OWNER }}',
-            repo: '${{ secrets.SWIFT_PACKAGE_REPO }}',
-            workflow_id: 'main.yml',
-            ref: 'master',
-            inputs: {
-              url: 'https://nightly.link/JJTech0130/xcframework-template/actions/runs/${{ github.run_id }}/xcframework.zip'
-            }
-          })
-          
   deploy:
     runs-on: ubuntu-latest
   
