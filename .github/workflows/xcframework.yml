@@ -59,6 +59,9 @@ jobs:
     - name: copy template back
       run: cp ../Package.template.swift Package.swift
       
+    - name: cat manifest
+      run: cat Package.swift
+      
     #- name: check if output branch exists
     #  run: |
     #    git show-ref --verify --quiet refs/heads/swift/${{ steps.extract_branch.outputs.branch }}
