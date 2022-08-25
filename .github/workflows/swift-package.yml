@@ -73,7 +73,7 @@ jobs:
     - run: git commit -m "test commit"
     
     # (just use --all rather than trying to insert the target branch name)
-    - run: git push -u origin --all
+    - run: git push --force -u origin --all
       
     #- name: git auto commit
     #  uses: stefanzweifel/git-auto-commit-action@v4.14.1
